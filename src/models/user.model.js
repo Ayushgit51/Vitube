@@ -1,6 +1,7 @@
 import mongoose, {Schema} from "mongoose";
 import jwt from "jsonwebtoken";
-import bcrypt from "bcryptjs";
+import bcrypt from "bcrypt";
+import { ApiResponse } from "../utils/ApiResponse.js";
 
 const userSchema = new Schema({
     username: {

@@ -1,14 +1,14 @@
-import express from 'express';
+
 // import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 // import { DB_NAME } from './constants.js';
 import connectDB from './db/index.js';
+import {app} from './app.js'; // Import the app instance
 
 dotenv.config({
     path: './env'
 }); // Load environment variables from .env file
 
-const app = express(); // Initialize the Express app
 
 connectDB() // Connect to MongoDB
 .then(() => {
@@ -20,6 +20,9 @@ connectDB() // Connect to MongoDB
     console.error("MongoDB connection Error: ", error);
     process.exit(1); // Exit the process with failure
 });
+// Middleware to parse JSON requests
+
+
 
 
 
