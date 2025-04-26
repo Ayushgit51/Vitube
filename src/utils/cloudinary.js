@@ -1,5 +1,5 @@
-import {v2 as cloudinary} from 'cloudinary';
-import fs from 'fs'; // file handling toll
+import { v2 as cloudinary } from 'cloudinary';
+import fs from 'fs'; // file handling tool
 
 // Configuration
 cloudinary.config({ 
@@ -11,17 +11,18 @@ cloudinary.config({
 const uploadOnCloudinary = async (filePath) => {
     try {
         if(!filePath) {
-            throw new Error('File path is required');
+            return null;
         }
         // Upload the file to Cloudinary
-       const response = await cloudinary.uploader.upload(filePath, {resource_type: 'auto'});
+       const response = await cloudinary.uploader.upload(filePath, {resource_type: 'image'});
 
-        console.log('File uploaded successfully', response.url);
-        return response.url;
+        // console.log('File uploaded successfully', response.url);
+        fs.unlinkSync(filePath); // Delete the file from local storage after upload
+        return response;
     } catch (error) {
         fs.unlinkSync(filePath); // Delete the file from local storage as upload operation got failed
         return null;
     }
 }
 
-export {uploadOnCloudinary};
+export { uploadOnCloudinary };
