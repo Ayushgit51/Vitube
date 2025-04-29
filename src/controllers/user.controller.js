@@ -368,5 +368,6 @@ export {
     getCurrentUser, 
     updateAccountDetails, 
     updateAvatar, 
-    updateCoverImage 
+    updateCoverImage,
+    getUserChannelProfile 
 };
