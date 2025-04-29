@@ -133,7 +133,7 @@ const loginUser = asyncHandler(async (req, res) => {
 const logoutUser = asyncHandler(async (req, res) => {
     User.findByIdAndUpdate(req.user._id,
         {
-            $set: { refreshToken: undefined }
+            $unset: { refreshToken: 1 } // this removes the field from document
         },
         {
             new: true
@@ -322,17 +322,11 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
         },
         {
             $addFields: {
-                subscribersCount: {
-                    $size: "$subscribers"
-                },
-                channelsSubscribedToCount: {
-                    $size: "$subscribedTo"
-                },
+                subscribersCount: { $size: "$subscribers" },
+                channelsSubscribedToCount: { $size: "$subscribedTo" },
                 isSubscribed: {
                     $cond: {
-                        if: {
-                            $in: [req.user?._id, "$subscribers.subscriber"]
-                        },
+                        if: { $in: [new mongoose.Types.ObjectId(req.user?._id), "$subscribers.subscriber"] },
                         then: true,
                         else: false
                     }
@@ -341,7 +335,7 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
         },
         {
             $project: {
-                fullname: 1,
+                fullName: 1,
                 username: 1,
                 subscribersCount: 1,
                 channelsSubscribedToCount: 1,
@@ -351,7 +345,7 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
                 email: 1
             }
         }
-    ])
+    ]);
 
     if (!channel?.length) {
         throw new ApiError(400, "Channel does not exist")
@@ -365,42 +359,44 @@ const getWatchHistory = asyncHandler(async (req, res) => {
         {
             $match: {
                 _id: new mongoose.Types.ObjectId(req.user._id)
-            },
+            }
+        },
+        {
             $lookup: {
                 from: "videos",
                 localField: "watchHistory",
                 foreignField: "_id",
-                as: "watchHistory",
-                pipeline: [
-                    {
-                        $lookup: {
-                            from: "users",
-                            localField: "owner",
-                            foreignField: "_id",
-                            as: "owner",
-                            pipeline: [
-                                {
-                                    $project: {
-                                        fullname: 1,
-                                        username: 1,
-                                        avatar: 1
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    {
-                        $addFields: {
-                            owner:{
-                                $first: "$owner"
-                            }
-                        }
-                    }
-                ],
-
+                as: "watchHistory"
+            }
+        },
+        {
+            $unwind: {
+                path: "$watchHistory",
+                preserveNullAndEmptyArrays: true
+            }
+        },
+        {
+            $lookup: {
+                from: "users",
+                localField: "watchHistory.owner",
+                foreignField: "_id",
+                as: "watchHistory.owner"
+            }
+        },
+        {
+            $addFields: {
+                "watchHistory.owner": {
+                    $arrayElemAt: ["$watchHistory.owner", 0]
+                }
+            }
+        },
+        {
+            $group: {
+                _id: "$_id",
+                watchHistory: { $push: "$watchHistory" }
             }
         }
-    ])
+    ]);
     return res.status(200).json(new ApiResponse(200, user[0].watchHistory, "watch history fetched successfully"))
 });
 
