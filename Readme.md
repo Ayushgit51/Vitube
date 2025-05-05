@@ -1,4 +1,4 @@
-# 🎥 Chai Aur Backend
+# 🎥 Vitube
 
 A full-featured backend API for a video-sharing platform built with Node.js, Express.js, MongoDB, and Cloudinary. It demonstrates the development of scalable and secure backend systems for modern web applications.
 
