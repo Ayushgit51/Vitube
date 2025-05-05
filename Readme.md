@@ -32,19 +32,19 @@ A full-featured backend API for a video-sharing platform built with Node.js, Exp
 
 ## 📂 Project Structure
 
-Vitube/
-│
-├── src/
-│ ├── controllers/
-│ ├── models/
-│ ├── routes/
-│ ├── middlewares/
-│ ├── utils/
-│ └── index.js
-├── public/
-├── .env.sample
-├── .prettierrc
-├── package.json
-└── README.md
+Vitube/<br>
+│<br>
+├── src/<br>
+│ ├── controllers/<br>
+│ ├── models/<br>
+│ ├── routes/<br>
+│ ├── middlewares/<br>
+│ ├── utils/<br>
+│ └── index.js<br>
+├── public/<br>
+├── .env.sample<br>
+├── .prettierrc<br>
+├── package.json<br>
+└── README.md<br>
 
 
